@@ -1,0 +1,10 @@
+{
+  "name": "prop-docs",
+  "version": "0.0.1",
+  "description": "A tool to extract property type information from JSX components",
+  "main": "dist/index.js",
+  "repository": "git@github.com:KrofDrakula/prop-docs.git",
+  "author": "Klemen Slavič <krof.drakula@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
