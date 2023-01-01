@@ -3,9 +3,10 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "prop-docs",
+      name: "@krofdrakula/prop-docs-preact",
       fileName: "index",
     },
     rollupOptions: {

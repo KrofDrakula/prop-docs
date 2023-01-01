@@ -1,18 +1,34 @@
 lockfileVersion: 5.4
 
-specifiers:
-  preact: ^10.11.3
-  ts-morph: ^17.0.1
-  typescript: ^4.9.4
-  vite: ^4.0.0
-  vitest: ^0.26.2
+importers:
 
-devDependencies:
-  preact: 10.11.3
-  ts-morph: 17.0.1
-  typescript: 4.9.4
-  vite: 4.0.3
-  vitest: 0.26.2
+  .:
+    specifiers: {}
+
+  packages/lib:
+    specifiers:
+      '@krofdrakula/prop-docs-preact': workspace:*
+      vite: ^4.0.0
+      vitest: ^0.26.2
+    dependencies:
+      '@krofdrakula/prop-docs-preact': link:../preact
+    devDependencies:
+      vite: 4.0.3
+      vitest: 0.26.2
+
+  packages/preact:
+    specifiers:
+      preact: ^10.11.3
+      ts-morph: ^17.0.1
+      typescript: ^4.9.4
+      vite: ^4.0.0
+      vitest: ^0.26.2
+    devDependencies:
+      preact: 10.11.3
+      ts-morph: 17.0.1
+      typescript: 4.9.4
+      vite: 4.0.3
+      vitest: 0.26.2
 
 packages:
 
