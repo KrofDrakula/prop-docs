@@ -26,6 +26,14 @@ export const Assigned = class extends Component<ExampleProps> {
   }
 };
 
+class InnerPassed extends Component<ExampleProps> {
+  render() {
+    return <div />;
+  }
+}
+
+export const OuterExported = InnerPassed;
+
 export default class DefExport extends Component<ExampleProps> {
   render() {
     return <div />;

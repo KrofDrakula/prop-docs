@@ -36,6 +36,13 @@ test("extracts exported Preact class components from a file", async () => {
     Object.keys(extractComponents(project, "src/examples/class_components.tsx"))
   );
   expect(detected).toEqual(
-    new Set(["Explicit", "Untyped", "Implicit", "Assigned", "default"])
+    new Set([
+      "Explicit",
+      "Untyped",
+      "Implicit",
+      "Assigned",
+      "OuterExported",
+      "default",
+    ])
   );
 });
