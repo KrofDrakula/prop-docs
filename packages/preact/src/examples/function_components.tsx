@@ -1,150 +1,43 @@
 import { FunctionalComponent, FunctionComponent } from "preact";
 import { ExampleProps } from "../example_props";
 
-export const Functional: FunctionalComponent<ExampleProps> = ({
-  name,
-  count,
-  attributes,
-}) => (
-  <div>
-    <div>name: {name}</div>
-    <div>count: {count}</div>
-    <div>
-      attributes:
-      <table>
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(attributes).map(([key, value]) => (
-            <tr>
-              <th>{key}</th>
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
+export const Functional: FunctionalComponent<ExampleProps> = (_props) => (
+  <div />
 );
 
-export const AlsoFunctional: FunctionComponent<ExampleProps> = ({
-  name,
-  count,
-  attributes,
-}) => (
-  <div>
-    <div>name: {name}</div>
-    <div>count: {count}</div>
-    <div>
-      attributes:
-      <table>
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(attributes).map(([key, value]) => (
-            <tr>
-              <th>{key}</th>
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
+export const AlsoFunctional: FunctionComponent<ExampleProps> = (_props) => (
+  <div />
 );
 
-export const Freeform = ({ name, count, attributes }: ExampleProps) => (
-  <div>
-    <div>name: {name}</div>
-    <div>count: {count}</div>
-    <div>
-      attributes:
-      <table>
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(attributes).map(([key, value]) => (
-            <tr>
-              <th>{key}</th>
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-);
+export const Freeform = (_props: ExampleProps) => <div />;
 
-export const InlineProps = ({
-  name,
-  count,
-  attributes,
-}: {
+export const InlineProps = (_props: {
   count: number;
   name: string;
   attributes: Record<string, string>;
-}) => (
-  <div>
-    <div>name: {name}</div>
-    <div>count: {count}</div>
-    <div>
-      attributes:
-      <table>
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(attributes).map(([key, value]) => (
-            <tr>
-              <th>{key}</th>
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-);
+}) => <div />;
 
 // @ts-expect-error
-export const Untyped = ({ name, count, attributes }) => (
-  <div>
-    <div>name: {name}</div>
-    <div>count: {count}</div>
-    <div>
-      attributes:
-      <table>
-        <thead>
-          <tr>
-            <th>Key</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.entries(attributes).map(([key, value]) => (
-            <tr>
-              <th>{key}</th>
-              {/* @ts-expect-error */}
-              <td>{value}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-);
+export const Untyped = (props) => <div />;
+
+export function FuncDeclaration(_props: ExampleProps) {
+  return <div />;
+}
+
+export const FuncExpr = function FuncExprInner(_props: ExampleProps) {
+  return <div />;
+};
+
+export const HigherOrder = (
+  (name: string) => (_props: ExampleProps) =>
+    <div>{name}</div>
+)("HigherOrder");
+
+// @ts-expect-error
+const Unexported = (_props: ExampleProps) => <div />;
+
+export const ImplicitlyAComponent = (_props: ExampleProps) => "blah";
+
+export const lowercaseComponent = (_props: ExampleProps) => <div />;
+
+export default (_props: ExampleProps) => <div />;
