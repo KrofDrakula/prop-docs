@@ -21,7 +21,6 @@ test("extracts exported Preact functional components from a file", async () => {
       "FuncDeclaration",
       "FuncExpr",
       "HigherOrder",
-      "ImplicitlyAComponent",
       "lowercaseComponent",
       "default",
       "NumberComponent",

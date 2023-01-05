@@ -35,7 +35,8 @@ export const HigherOrder = (
 
 const Unexported = (_props: ExampleProps) => <div />;
 
-export const ImplicitlyAComponent = (_props: ExampleProps) => "blah";
+// @ts-expect-error
+const AnotherUnexported = (_props: ExampleProps) => <div />;
 
 export const lowercaseComponent = (_props: ExampleProps) => <div />;
 
