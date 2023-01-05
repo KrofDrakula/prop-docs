@@ -43,14 +43,14 @@ const doesClassExtendComponent = (node: Node): boolean => {
     )
   )
     return false;
-  return true; //node.getBaseClass()?.getSymbol()?.getEscapedName() != "Component";
+  return true;
 };
 
 const getParameterTypeFromFunction = (
   node: ArrowFunction | FunctionDeclaration | FunctionExpression
 ): Type | void => {
   return isFunctionalComponent(node)
-    ? node.getParameters()[0].getType()
+    ? node.getParameters()[0]?.getType()
     : undefined;
 };
 
@@ -58,70 +58,8 @@ const getParameterTypeFromClass = (
   node: ClassDeclaration | ClassExpression
 ): Type | undefined => {
   return doesClassExtendComponent(node)
-    ? node.getExtends()?.getTypeArguments()[0].getType()
+    ? node.getExtends()?.getTypeArguments()[0]?.getType()
     : undefined;
-};
-
-const processFunctionDeclaration = (node: Node): Type | void => {
-  if (
-    node.isKind(SyntaxKind.ArrowFunction) ||
-    node.isKind(SyntaxKind.FunctionDeclaration) ||
-    node.isKind(SyntaxKind.FunctionExpression)
-  ) {
-    return getParameterTypeFromFunction(node);
-  }
-};
-
-const processClassDeclaration = (node: Node): Type | void => {
-  if (
-    node?.isKind(SyntaxKind.ClassDeclaration) ||
-    node?.isKind(SyntaxKind.ClassExpression)
-  ) {
-    return getParameterTypeFromClass(node);
-  }
-};
-
-const processVariableDeclaration = (node: Node): Type | void => {
-  if (node.isKind(SyntaxKind.VariableDeclaration)) {
-    const initializer = node.getInitializer();
-    if (
-      initializer?.isKind(SyntaxKind.ArrowFunction) ||
-      initializer?.isKind(SyntaxKind.FunctionExpression)
-    ) {
-      return processFunctionDeclaration(initializer);
-    } else if (
-      initializer?.isKind(SyntaxKind.ClassDeclaration) ||
-      initializer?.isKind(SyntaxKind.ClassExpression)
-    ) {
-      return processClassDeclaration(initializer);
-    }
-  }
-};
-
-const processCallExpression = (
-  node: Node,
-  typeChecker: TypeChecker
-): Type | void => {
-  const initType = typeChecker.getTypeAtLocation(node);
-  const [callResult] = initType.getSymbol()?.getDeclarations() ?? [];
-  if (callResult?.isKind(SyntaxKind.ClassExpression)) {
-    return getParameterTypeFromClass(callResult);
-  }
-  const [signature] = initType.getCallSignatures();
-  if (signature) {
-    return getParameterTypeFromFunction(
-      signature.getDeclaration() as FunctionExpression
-    );
-  }
-};
-
-const processIdentifier = (node: Node): Type | void => {
-  const [declaration] = node.getSymbol()?.getDeclarations() ?? [];
-  if (!declaration) return;
-  return (
-    getParameterTypeFromFunction(declaration as ArrowFunction) ??
-    getParameterTypeFromClass(declaration as ClassExpression)
-  );
 };
 
 const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
