@@ -1,6 +1,6 @@
 import { Project } from "ts-morph";
 import { test, expect } from "vitest";
-import extractComponents from "./extract_components";
+import extractComponentParams from "./extract_components";
 
 test("extracts exported Preact functional components from a file", async () => {
   const project = new Project({
@@ -8,7 +8,7 @@ test("extracts exported Preact functional components from a file", async () => {
   });
   const detected = new Set(
     Object.keys(
-      extractComponents(project, "src/examples/function_components.tsx")
+      extractComponentParams(project, "src/examples/function_components.tsx")
     )
   );
   expect(detected).toEqual(
@@ -24,6 +24,11 @@ test("extracts exported Preact functional components from a file", async () => {
       "ImplicitlyAComponent",
       "lowercaseComponent",
       "default",
+      "NumberComponent",
+      "StringComponent",
+      "NullComponent",
+      "FragmentComponent",
+      "Aliased",
     ])
   );
 });
@@ -32,9 +37,11 @@ test("extracts exported Preact class components from a file", async () => {
   const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
   });
-  const detected = new Set(
-    Object.keys(extractComponents(project, "src/examples/class_components.tsx"))
+  const result = extractComponentParams(
+    project,
+    "src/examples/class_components.tsx"
   );
+  const detected = new Set(Object.keys(result));
   expect(detected).toEqual(
     new Set([
       "Explicit",
@@ -43,6 +50,7 @@ test("extracts exported Preact class components from a file", async () => {
       "Assigned",
       "OuterExported",
       "default",
+      "Constructed",
     ])
   );
 });

@@ -33,7 +33,6 @@ export const HigherOrder = (
     <div>{name}</div>
 )("HigherOrder");
 
-// @ts-expect-error
 const Unexported = (_props: ExampleProps) => <div />;
 
 export const ImplicitlyAComponent = (_props: ExampleProps) => "blah";
@@ -41,3 +40,13 @@ export const ImplicitlyAComponent = (_props: ExampleProps) => "blah";
 export const lowercaseComponent = (_props: ExampleProps) => <div />;
 
 export default (_props: ExampleProps) => <div />;
+
+export const NumberComponent = (_props: ExampleProps) => 42;
+
+export const StringComponent = (_props: ExampleProps) => "hello world";
+
+export const NullComponent = (_props: ExampleProps) => null;
+
+export const FragmentComponent = (_props: ExampleProps) => <></>;
+
+export const Aliased = Unexported;

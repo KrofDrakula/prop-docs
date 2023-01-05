@@ -1,4 +1,4 @@
-import { Component } from "preact";
+import { Component, ComponentType } from "preact";
 import { ExampleProps } from "../example_props";
 
 export class Explicit extends Component<ExampleProps> {
@@ -39,3 +39,8 @@ export default class DefExport extends Component<ExampleProps> {
     return <div />;
   }
 }
+
+const factory = (Wrapped: ComponentType<any>) => (props: ExampleProps) =>
+  <Wrapped {...props} />;
+
+export const Constructed = factory(OuterExported);
