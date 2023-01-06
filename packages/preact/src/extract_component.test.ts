@@ -30,6 +30,14 @@ test("extracts exported Preact functional components from a file", async () => {
       "Aliased",
     ])
   );
+
+  for (const [key, value] of Object.entries(detected)) {
+    if (key == "Untyped") {
+      expect(value.getText()).toEqual("unknown");
+    } else {
+      expect(value.getText()).toMatch(/\.ExampleProps$/);
+    }
+  }
 });
 
 test("extracts exported Preact class components from a file", async () => {
@@ -52,4 +60,11 @@ test("extracts exported Preact class components from a file", async () => {
       "Constructed",
     ])
   );
+  for (const [key, value] of Object.entries(result)) {
+    if (key == "Untyped") {
+      expect(value.getText()).toEqual("unknown");
+    } else {
+      expect(value.getText()).toMatch(/\.ExampleProps$/);
+    }
+  }
 });
