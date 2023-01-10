@@ -7,11 +7,10 @@ const getExportedType = (
   sourceFile: SourceFile,
   exportedName: string
 ): Type | void => {
-  for (const [name, declarations] of sourceFile.getExportedDeclarations()) {
-    if (name == exportedName) {
-      return declarations[0].getType();
-    }
-  }
+  return sourceFile
+    .getExportedDeclarations()
+    ?.get(exportedName)?.[0]
+    ?.getType();
 };
 
 test("should return empty ArgTypes when given non-iterable, non-object values", () => {
@@ -43,12 +42,12 @@ test("should return an object description when props are iterable objects", () =
   );
   const argTypes = convertType(getExportedType(sourceFile, "myProps")!);
   expect(argTypes).toEqual({
-    truthy: { type: "boolean" },
-    name: { type: "string" },
-    age: { type: "number" },
-    array: {},
-    object: {},
-    slap: { type: "function" },
+    truthy: { type: { name: "boolean", required: true } },
+    name: { type: { name: "string", required: true } },
+    age: { type: { name: "number", required: true } },
+    array: { type: { name: "array", required: true, value: {} } },
+    object: { type: { name: "object", required: true, value: {} } },
+    slap: { type: { name: "function", required: true } },
   });
 });
 
@@ -69,9 +68,25 @@ test("it should provide parameter descriptions from JSDoc", () => {
   const argTypes = convertType(getExportedType(sourceFile, "myProps")!);
   expect(argTypes).toEqual({
     name: {
-      type: "string",
+      type: { name: "string", required: true },
       description:
         "Provides the name of the person. It should work\nwith multiline descriptions.",
     },
+  });
+});
+
+test("it should provide required flags for optional props", () => {
+  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const sourceFile = project.createSourceFile(
+    "a.ts",
+    dedent`
+      export const myProps = {
+        name?: 'hello'
+      };
+    `
+  );
+  const argTypes = convertType(getExportedType(sourceFile, "myProps")!);
+  expect(argTypes).toEqual({
+    name: { type: { name: "string", required: false } },
   });
 });

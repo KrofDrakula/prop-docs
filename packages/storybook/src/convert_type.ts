@@ -1,28 +1,52 @@
-import { Node, SyntaxKind, Type } from "ts-morph";
-import { ArgTypes, InputType } from "@storybook/types";
+import { Node, SyntaxKind, Type, ts } from "ts-morph";
+import {
+  ArgTypes,
+  SBArrayType,
+  SBObjectType,
+  SBScalarType,
+  SBType,
+} from "@storybook/types";
 
 const getDescription = (node: Node): string | void => {
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
-    return node.compilerNode.jsDoc?.length > 0
-      ? node.compilerNode.jsDoc.map((c) => c.comment).join("\n")
-      : undefined;
+    // @ts-expect-error https://github.com/dsherret/ts-morph/issues/1379
+    const docs = node.compilerNode.jsDoc as ts.JSDoc[];
+    return docs?.length > 0 ? docs.map((c) => c.comment).join("\n") : undefined;
   }
 };
 
-const getStorybookType = (node: Node): InputType["type"] | void => {
+const getStorybookType = (
+  node: Node | undefined
+): SBType | SBScalarType["name"] | void => {
+  if (!node) return;
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
+    const required = !node.hasQuestionToken();
     const initializer = node.getInitializer();
     if (!initializer) return;
     const value = initializer.getType().getBaseTypeOfLiteralType();
     if (!value) return;
     if (value.isBoolean()) {
-      return "boolean";
+      return { name: "boolean", required };
     } else if (value.isNumber()) {
-      return "number";
+      return { name: "number", required };
     } else if (value.isString()) {
-      return "string";
+      return { name: "string", required };
     } else if (value.getCallSignatures().length > 0) {
-      return "function";
+      return { name: "function", required };
+    } else if (value.isArray()) {
+      // TODO: recursively determine inner types
+      return {
+        name: "array",
+        value: {} as SBType,
+        required,
+      } satisfies SBArrayType;
+    } else if (value.isObject()) {
+      // TODO: recursively determine inner types
+      return {
+        name: "object",
+        required,
+        value: {},
+      } satisfies SBObjectType;
     }
   }
 };
@@ -33,12 +57,12 @@ const convertType = (type: Type): ArgTypes => {
     for (const property of type.getProperties()) {
       const name = property.getName();
       const [decl] = property.getDeclarations() ?? [];
-      const propAssignment = decl.asKind(SyntaxKind.PropertyAssignment);
-      if (!propAssignment) continue;
-      const valueType = getStorybookType(propAssignment);
-      result[name] = valueType ? { type: valueType } : {};
-      const description = getDescription(propAssignment);
-      if (description) result[name].description = description;
+      if (decl.isKind(SyntaxKind.PropertyAssignment)) {
+        const valueType = getStorybookType(decl);
+        result[name] = valueType ? { type: valueType } : {};
+        const description = getDescription(decl);
+        if (description) result[name].description = description;
+      }
     }
   }
   return result;
