@@ -45,7 +45,7 @@ test("should return an object description when props are iterable objects", () =
     truthy: { type: { name: "boolean", required: true } },
     name: { type: { name: "string", required: true } },
     age: { type: { name: "number", required: true } },
-    array: { type: { name: "array", required: true, value: {} } },
+    array: { type: { name: "array", required: true } },
     object: { type: { name: "object", required: true, value: {} } },
     slap: { type: { name: "function", required: true } },
   });

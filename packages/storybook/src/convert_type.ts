@@ -1,11 +1,5 @@
 import { Node, SyntaxKind, Type, ts } from "ts-morph";
-import {
-  ArgTypes,
-  SBArrayType,
-  SBObjectType,
-  SBScalarType,
-  SBType,
-} from "@storybook/types";
+import { ArgTypes, SBArrayType, SBObjectType, SBType } from "@storybook/types";
 
 const getDescription = (node: Node): string | void => {
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
@@ -15,9 +9,7 @@ const getDescription = (node: Node): string | void => {
   }
 };
 
-const getStorybookType = (
-  node: Node | undefined
-): SBType | SBScalarType["name"] | void => {
+const getStorybookType = (node: Node | undefined): SBType | void => {
   if (!node) return;
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
     const required = !node.hasQuestionToken();
@@ -37,7 +29,9 @@ const getStorybookType = (
       // TODO: recursively determine inner types
       return {
         name: "array",
-        value: {} as SBType,
+        value: getStorybookType(
+          value.getArrayElementType()?.getSymbol()?.getDeclarations()[0]
+        )!,
         required,
       } satisfies SBArrayType;
     } else if (value.isObject()) {
