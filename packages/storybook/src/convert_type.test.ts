@@ -91,7 +91,7 @@ test("it should provide required flags for optional props", () => {
   });
 });
 
-test("is should handle exported interfaces", () => {
+test("it should handle exported interfaces", () => {
   const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
   const sourceFile = project.createSourceFile(
     "a.ts",
@@ -105,6 +105,24 @@ test("is should handle exported interfaces", () => {
   const argTypes = convertType(
     getExportedType(sourceFile, "ExportedInterface")!
   );
+  expect(argTypes).toEqual({
+    name: { type: { name: "string", required: false } },
+    age: { type: { name: "number", required: true } },
+  });
+});
+
+test("it should handle exported types", () => {
+  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const sourceFile = project.createSourceFile(
+    "a.ts",
+    dedent`
+      export type ExportedType = {
+        name?: string;
+        age: number;
+      };
+    `
+  );
+  const argTypes = convertType(getExportedType(sourceFile, "ExportedType")!);
   expect(argTypes).toEqual({
     name: { type: { name: "string", required: false } },
     age: { type: { name: "number", required: true } },

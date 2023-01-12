@@ -21,7 +21,6 @@ const convertTypeToStorybookType = (
   required: boolean
 ): SBType | void => {
   const normalized = type.getBaseTypeOfLiteralType();
-  console.log("sb type", normalized.getText());
   if (normalized.isBoolean()) {
     return { name: "boolean", required };
   } else if (normalized.isNumber()) {
@@ -80,7 +79,6 @@ const convertType = (type: Type): ArgTypes => {
   if (type.isObject() || type.isInterface()) {
     for (const property of type.getProperties()) {
       const name = property.getName();
-      console.log(name);
       const [decl] = property.getDeclarations() ?? [];
       const valueType = extractTypeForProperty(decl);
       result[name] = valueType ? { type: valueType } : {};
