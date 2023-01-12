@@ -45,7 +45,7 @@ test("should return an object description when props are iterable objects", () =
     truthy: { type: { name: "boolean", required: true } },
     name: { type: { name: "string", required: true } },
     age: { type: { name: "number", required: true } },
-    array: { type: { name: "array", required: true } },
+    array: { type: { name: "array", required: true, value: {} } },
     object: { type: { name: "object", required: true, value: {} } },
     slap: { type: { name: "function", required: true } },
   });
@@ -88,5 +88,25 @@ test("it should provide required flags for optional props", () => {
   const argTypes = convertType(getExportedType(sourceFile, "myProps")!);
   expect(argTypes).toEqual({
     name: { type: { name: "string", required: false } },
+  });
+});
+
+test("is should handle exported interfaces", () => {
+  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const sourceFile = project.createSourceFile(
+    "a.ts",
+    dedent`
+      export interface ExportedInterface {
+        name?: string;
+        age: number;
+      };
+    `
+  );
+  const argTypes = convertType(
+    getExportedType(sourceFile, "ExportedInterface")!
+  );
+  expect(argTypes).toEqual({
+    name: { type: { name: "string", required: false } },
+    age: { type: { name: "number", required: true } },
   });
 });
