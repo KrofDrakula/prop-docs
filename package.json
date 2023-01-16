@@ -5,5 +5,8 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test -- --run"
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.26.0"
   }
 }
