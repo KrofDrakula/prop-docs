@@ -14,7 +14,7 @@ const getExportedType = (
 };
 
 test("should return empty ArgTypes when given non-iterable, non-object values", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`
@@ -26,7 +26,7 @@ test("should return empty ArgTypes when given non-iterable, non-object values", 
 });
 
 test("should return an object description when props are iterable objects", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`
@@ -64,7 +64,7 @@ test("should return an object description when props are iterable objects", () =
 });
 
 test("it should provide parameter descriptions from JSDoc", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`
@@ -88,7 +88,7 @@ test("it should provide parameter descriptions from JSDoc", () => {
 });
 
 test("it should provide required flags for optional props", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`
@@ -104,7 +104,7 @@ test("it should provide required flags for optional props", () => {
 });
 
 test("it should handle exported interfaces", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`
@@ -124,7 +124,7 @@ test("it should handle exported interfaces", () => {
 });
 
 test("it should handle exported types", () => {
-  const project = new Project({ tsConfigFilePath: "./tsconfig.json" });
+  const project = new Project();
   const sourceFile = project.createSourceFile(
     "a.ts",
     dedent`

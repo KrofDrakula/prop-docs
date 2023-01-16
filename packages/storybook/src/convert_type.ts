@@ -89,6 +89,7 @@ const extractTypeForProperty = (node: Node | undefined): SBType | void => {
 
 const convertType = (type: Type): ArgTypes => {
   const result: ArgTypes = {};
+  //type = type.getApparentType();
   if (type.isObject() || type.isInterface()) {
     for (const property of type.getProperties()) {
       const name = property.getName();
@@ -98,6 +99,8 @@ const convertType = (type: Type): ArgTypes => {
       const description = getDescription(decl);
       if (description) result[name].description = description;
     }
+  } else {
+    console.log(type.getText());
   }
   return result;
 };
