@@ -6,7 +6,7 @@ import {
   PropertyAssignment,
   PropertySignature,
 } from "ts-morph";
-import { ArgTypes, SBType } from "@storybook/types";
+import type { ArgTypes, SBType } from "@storybook/types";
 
 const getDescription = (node: Node): string | void => {
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
