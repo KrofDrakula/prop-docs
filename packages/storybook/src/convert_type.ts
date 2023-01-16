@@ -6,7 +6,7 @@ import {
   PropertyAssignment,
   PropertySignature,
 } from "ts-morph";
-import { ArgTypes, SBArrayType, SBObjectType, SBType } from "@storybook/types";
+import { ArgTypes, SBType } from "@storybook/types";
 
 const getDescription = (node: Node): string | void => {
   if (node.isKind(SyntaxKind.PropertyAssignment)) {
@@ -16,34 +16,47 @@ const getDescription = (node: Node): string | void => {
   }
 };
 
+const convertObject = (type: Type): Record<string, SBType> => {
+  const result: Record<string, SBType> = {};
+  for (const prop of type.getProperties()) {
+    const required = !prop.isOptional();
+    const resolvedType = convertTypeToStorybookType(
+      prop.getDeclarations()[0].getType(),
+      required
+    );
+    if (resolvedType) result[prop.getName()] = resolvedType;
+  }
+  return result;
+};
+
 const convertTypeToStorybookType = (
   type: Type,
-  required: boolean
+  required?: boolean
 ): SBType | void => {
+  let result: SBType | undefined = undefined;
   const normalized = type.getBaseTypeOfLiteralType();
   if (normalized.isBoolean()) {
-    return { name: "boolean", required };
+    result = { name: "boolean" };
   } else if (normalized.isNumber()) {
-    return { name: "number", required };
+    result = { name: "number" };
   } else if (normalized.isString()) {
-    return { name: "string", required };
+    result = { name: "string" };
   } else if (normalized.getCallSignatures().length > 0) {
-    return { name: "function", required };
+    result = { name: "function" };
   } else if (normalized.isArray()) {
-    // TODO: recursively determine inner types
-    return {
+    result = {
       name: "array",
-      value: {} as any,
-      required,
-    } satisfies SBArrayType;
+      value:
+        convertTypeToStorybookType(type.getNumberIndexType()!) ?? ({} as any),
+    };
   } else if (normalized.isObject()) {
-    // TODO: recursively determine inner types
-    return {
+    result = {
       name: "object",
-      value: {},
-      required,
-    } satisfies SBObjectType;
+      value: convertObject(normalized),
+    };
   }
+  if (result && required != undefined) (result as SBType).required = required;
+  return result;
 };
 
 const getPropertyAssignmentType = (node: PropertyAssignment): SBType | void => {
