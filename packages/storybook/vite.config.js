@@ -10,6 +10,9 @@ export default defineConfig({
       name: "@krofdrakula/prop-docs-storybook",
       fileName: "index",
     },
+    rollupOptions: {
+      external: ["ts-morph"],
+    },
   },
   plugins: [dts()],
 });

@@ -11,7 +11,7 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["preact"],
+      external: ["preact", "ts-morph"],
     },
   },
   plugins: [dts()],
