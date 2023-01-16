@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
-    "test": "pnpm -r test -- --run"
+    "test": "pnpm -r test -- --run",
+    "lint": "pnpm -r lint"
   },
   "devDependencies": {
     "@changesets/cli": "2.26.0"

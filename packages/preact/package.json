@@ -19,7 +19,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "lint": "tsc"
   },
   "peerDependencies": {
     "preact": ">=10",
