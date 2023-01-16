@@ -25,6 +25,7 @@ const isFunctionalComponent = (node: Node): boolean => {
 
   const returnType = node.getReturnType();
 
+  // TODO: this should be compatible with `ReturnType<FunctionalComponent>`
   return (
     returnType.isNull() ||
     returnType.isUndefined() ||
