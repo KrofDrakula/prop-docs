@@ -28,6 +28,22 @@ test("should be able to use extracted functional component props from Preact com
   `
   );
   const { Showcase } = extractComponentParams(project, "a.ts");
+  expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
-  expect(argTypes).toEqual({ name: {}, age: {} });
+  expect(argTypes).toEqual({
+    name: {
+      type: {
+        name: "string",
+        required: true,
+      },
+      description: "Provide the name of the product to display",
+    },
+    age: {
+      type: {
+        name: "number",
+        required: false,
+      },
+      description: "Optionally specify the age of the product",
+    },
+  });
 });

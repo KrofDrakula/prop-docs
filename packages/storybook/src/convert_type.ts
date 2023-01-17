@@ -9,7 +9,10 @@ import {
 import type { ArgTypes, SBType } from "@storybook/types";
 
 const getDescription = (node: Node): string | void => {
-  if (node.isKind(SyntaxKind.PropertyAssignment)) {
+  if (
+    node.isKind(SyntaxKind.PropertyAssignment) ||
+    node.isKind(SyntaxKind.PropertySignature)
+  ) {
     // @ts-expect-error https://github.com/dsherret/ts-morph/issues/1379
     const docs = node.compilerNode.jsDoc as ts.JSDoc[];
     return docs?.length > 0 ? docs.map((c) => c.comment).join("\n") : undefined;
@@ -89,7 +92,6 @@ const extractTypeForProperty = (node: Node | undefined): SBType | void => {
 
 const convertType = (type: Type): ArgTypes => {
   const result: ArgTypes = {};
-  //type = type.getApparentType();
   if (type.isObject() || type.isInterface()) {
     for (const property of type.getProperties()) {
       const name = property.getName();
@@ -100,7 +102,9 @@ const convertType = (type: Type): ArgTypes => {
       if (description) result[name].description = description;
     }
   } else {
-    console.log(type.getText());
+    if (type.getText().startsWith("preact.RenderableProps")) {
+      return convertType(type.getAliasTypeArguments()[0]);
+    }
   }
   return result;
 };
