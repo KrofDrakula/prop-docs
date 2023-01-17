@@ -17,7 +17,8 @@
   "private": false,
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "module": "./dist/index.js",
   "main": "./dist/index.umd.cjs",
