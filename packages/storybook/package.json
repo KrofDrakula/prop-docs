@@ -1,6 +1,19 @@
 {
   "name": "@krofdrakula/prop-docs-storybook",
   "version": "0.0.1",
+  "author": "Klemen Slavič <krof.drakula@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KrofDrakula/prop-docs/issues"
+  },
+  "homepage": "https://github.com/KrofDrakula/prop-docs#readme",
+  "description": "A tool to translate TS types to Storybook ArgTypes",
+  "keywords": [
+    "typescript",
+    "types",
+    "proptypes",
+    "preact"
+  ],
   "private": false,
   "type": "module",
   "files": [

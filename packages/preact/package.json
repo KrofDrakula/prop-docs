@@ -1,6 +1,19 @@
 {
   "name": "@krofdrakula/prop-docs-preact",
   "version": "0.0.1",
+  "author": "Klemen Slavič <krof.drakula@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KrofDrakula/prop-docs/issues"
+  },
+  "homepage": "https://github.com/KrofDrakula/prop-docs#readme",
+  "description": "A tool to extract prop types from Preact components",
+  "keywords": [
+    "typescript",
+    "types",
+    "proptypes",
+    "storybook"
+  ],
   "private": false,
   "type": "module",
   "files": [
@@ -35,5 +48,9 @@
     "vite": "4.0.4",
     "vite-plugin-dts": "1.7.1",
     "vitest": "0.27.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KrofDrakula/prop-docs.git"
   }
 }
