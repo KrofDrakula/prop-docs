@@ -1,7 +1,7 @@
 {
   "name": "@krofdrakula/prop-docs-preact",
   "version": "0.0.1",
-  "private": true,
+  "private": false,
   "type": "module",
   "files": [
     "dist"
