@@ -5,18 +5,26 @@ TypeScript.
 
 This library directly depends on [`ts-morph`](https://ts-morph.com/) and expects
 to be passed a [`Project`](https://ts-morph.com/setup/) in order to leverage TS
-type resolution.
+type resolution. TypeScript is also expected to be available as a peer
+dependency.
 
 This ecosystem uses the [`Type`](https://ts-morph.com/details/types) object as
 the intermediate representation to provide type extraction and translation for
 multiple different libraries.
 
-You'll probably want to pair a specific front-end library (like Preact) with a
-consumer application (like Storybook) that consumes types in its own format.
+Unless you are consuming the `ts-morph` `Type` directly, you'll probably want to
+pipe the output of the frontend parsing library (like Preact) to an output
+function for a particular framework (like Storybook).
 
-## Supported front-end libraries
+## Supported software
 
-### Preact
+| ➡️ Inputs         | Outputs ➡️              |
+| ----------------- | ----------------------- |
+| [Preact](#preact) | [Storybook](#storybook) |
+
+---
+
+## Preact
 
 Install the `preact` package:
 
@@ -78,9 +86,7 @@ const { Badge, Profile } = extractComponentParams(project, 'components.tsx');
 The return types are instances of [`Type`](https://ts-morph.com/details/types)
 which provides the description of the props object.
 
-## Supported framework adapters
-
-### Storybook
+## Storybook
 
 ```
 yarn add @krofdrakula/prop-docs-storybook
