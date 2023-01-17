@@ -100,6 +100,7 @@ import { extractComponentParams } from "@krofdrakula/prop-docs-preact";
 import { convertType } from "@krofdrakula/prop-docs-storybook";
 
 const project = new Project();
+// this project assumes that `components.tsx` exists as in the Preact example
 const { Profile } = extractComponentParams(project, "components.tsx");
 const profileArgTypes = convertType(Profile);
 //    ^? {
