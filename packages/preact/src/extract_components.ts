@@ -95,12 +95,6 @@ const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
       if (declaration.isKind(SyntaxKind.ClassDeclaration)) {
         return getParameterTypeFromClass(declaration);
       }
-      if (
-        declaration.isKind(SyntaxKind.ArrowFunction) ||
-        declaration.isKind(SyntaxKind.FunctionExpression)
-      ) {
-        return getParameterTypeFromFunction(declaration);
-      }
       return getParamType(declaration, typeChecker);
     } else if (initializer) {
       return getParamType(initializer, typeChecker);
