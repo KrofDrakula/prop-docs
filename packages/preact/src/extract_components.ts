@@ -89,16 +89,12 @@ const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
           signature.getDeclaration() as FunctionExpression
         );
       }
-    } else if (initializer?.isKind(SyntaxKind.Identifier)) {
-      const [declaration] = initializer.getSymbol()?.getDeclarations() ?? [];
-      if (!declaration) return;
-      if (declaration.isKind(SyntaxKind.ClassDeclaration)) {
-        return getParameterTypeFromClass(declaration);
-      }
-      return getParamType(declaration, typeChecker);
     } else if (initializer) {
       return getParamType(initializer, typeChecker);
     }
+  } else if (node.isKind(SyntaxKind.Identifier)) {
+    const declaration = node.getSymbol()?.getDeclarations()[0];
+    if (declaration) return getParamType(declaration, typeChecker);
   }
 };
 

@@ -58,3 +58,65 @@ test("should work for CSF-style objects", () => {
     });
   });
 });
+
+test('should inherit "component" property from meta', () => {
+  const project = new Project();
+  project.createSourceFile(
+    "a.ts",
+    dedent`
+      interface Args {
+        name: string;
+        age?: number;
+      }
+
+      const MyButton = (args: Args) => <div>Hello!</div>;
+
+      export default {
+        component: MyButton
+      };
+
+      export const AStory = {};
+    `
+  );
+
+  const extractedTypes = extractStoryArgs(project, "a.ts");
+
+  expect(extractedTypes).toHaveProperty("AStory");
+  const convertedType = convertType(extractedTypes.AStory);
+  expect(convertedType).toEqual({
+    name: { type: { name: "string", required: true } },
+    age: { type: { name: "number", required: false } },
+  });
+});
+
+test('should resolve "component" through indirection', () => {
+  const project = new Project();
+  project.createSourceFile(
+    "a.ts",
+    dedent`
+      interface Args {
+        name: string;
+        age?: number;
+      }
+
+      const MyButton = (args: Args) => <div>Hello!</div>;
+
+      const component = MyButton
+
+      export default {
+        component
+      };
+
+      export const AStory = {};
+    `
+  );
+
+  const extractedTypes = extractStoryArgs(project, "a.ts");
+
+  expect(extractedTypes).toHaveProperty("AStory");
+  const convertedType = convertType(extractedTypes.AStory);
+  expect(convertedType).toEqual({
+    name: { type: { name: "string", required: true } },
+    age: { type: { name: "number", required: false } },
+  });
+});
