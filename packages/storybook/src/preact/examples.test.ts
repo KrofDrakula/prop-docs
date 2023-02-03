@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { extractComponentParams } from "@krofdrakula/prop-docs-preact";
+import { extractComponents } from "@krofdrakula/prop-docs-preact";
 import { Project } from "ts-morph";
 import dedent from "dedent";
 import convertType from "../convert_type";
@@ -28,7 +28,7 @@ test("should be able to use extracted functional component props from Preact com
     );
   `
   );
-  const { Showcase } = extractComponentParams(project, "a.ts");
+  const { Showcase } = extractComponents(project, "a.ts");
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
@@ -77,7 +77,7 @@ test("should be able to use extracted props from Preact class components", () =>
       };
     `
   );
-  const { Showcase } = extractComponentParams(project, "a.ts");
+  const { Showcase } = extractComponents(project, "a.ts");
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
@@ -126,7 +126,7 @@ test("should be able to extract props from imported types", () => {
       );
     `
   );
-  const { Showcase } = extractComponentParams(project, "a.ts");
+  const { Showcase } = extractComponents(project, "a.ts");
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
