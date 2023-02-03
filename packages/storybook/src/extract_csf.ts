@@ -67,17 +67,18 @@ const getArgsFromStoryObject = (
 
   // at this point, the meta might define the component to render
   const meta = getDefaultExport(node);
-
   if (meta) {
-    const componentFn = meta
+    const defaultObj = meta
       .asKind(SyntaxKind.ExportAssignment)
       ?.getExpression()
-      .asKind(SyntaxKind.ObjectLiteralExpression)
-      ?.getProperty("component")
-      ?.asKind(SyntaxKind.PropertyAssignment)
-      ?.getInitializer();
-    if (componentFn)
-      return getArgsType(componentFn, typeChecker, componentExtractor);
+      .asKind(SyntaxKind.ObjectLiteralExpression);
+    if (defaultObj) {
+      const defaultComponentFn = getPropertyValue(
+        defaultObj.getProperty("component")
+      );
+      if (defaultComponentFn)
+        return getArgsType(defaultComponentFn, typeChecker, componentExtractor);
+    }
   }
 };
 

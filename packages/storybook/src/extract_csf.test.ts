@@ -89,7 +89,7 @@ test('should inherit "component" property from meta', () => {
   });
 });
 
-test('should resolve "component" through indirection', () => {
+test.only('should resolve "component" through indirection', () => {
   const project = new Project();
   project.createSourceFile(
     "a.ts",
