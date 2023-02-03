@@ -3,6 +3,7 @@ import { extractComponentParams } from "@krofdrakula/prop-docs-preact";
 import { Project } from "ts-morph";
 import dedent from "dedent";
 import convertType from "../convert_type";
+import extractCSF from "../extract_csf";
 
 test("should be able to use extracted functional component props from Preact components", () => {
   const project = new Project();
@@ -143,5 +144,49 @@ test("should be able to extract props from imported types", () => {
       },
       description: "Optionally specify the age of the product",
     },
+  });
+});
+
+test.skip("should be able to work with stories importing Preact components", () => {
+  const project = new Project();
+  project.createSourceFile(
+    "comp.ts",
+    dedent`
+      /* @jsxRuntime automatic @jsxImportSource preact */
+      import { FunctionalComponent } from 'preact';
+
+      interface Props {
+        name: string,
+        age?: number
+      }
+
+      export const FComponent: FunctionalComponent<Props> = ({
+        name, age = 10
+      }) => (
+        <div>Hello, {name}! ({age})</div>
+      );
+    `
+  );
+  project.createSourceFile(
+    "comp.stories.ts",
+    dedent`
+      import { FComponent } from './comp';
+
+      export default {
+        component: FComponent
+      }
+
+      export const Basic = {
+        args: { name: 'John Doe' }
+      };
+    `
+  );
+
+  const stories = extractCSF(project, "comp.stories.ts");
+  expect(stories).toHaveProperty("Basic");
+  const converted = convertType(stories.Basic);
+  expect(converted).toEqual({
+    name: { type: { name: "string", required: true } },
+    age: { type: { name: "number", required: false } },
   });
 });

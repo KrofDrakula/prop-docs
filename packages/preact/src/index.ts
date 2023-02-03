@@ -1,3 +1,3 @@
-import extractComponentParams from "./extract_components";
+import extractComponents from "./extract_components";
 
-export { extractComponentParams };
+export { extractComponents };

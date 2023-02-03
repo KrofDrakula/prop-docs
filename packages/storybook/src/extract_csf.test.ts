@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { Project } from "ts-morph";
 import dedent from "dedent";
-import extractStoryArgs from "./extract_csf";
+import extractCSF from "./extract_csf";
 import convertType from "./convert_type";
 
 test("should work for function type stories", () => {
@@ -18,7 +18,7 @@ test("should work for function type stories", () => {
     `
   );
 
-  const extractedTypes = extractStoryArgs(project, "a.ts");
+  const extractedTypes = extractCSF(project, "a.ts");
   expect(extractedTypes).toHaveProperty("CSFStory");
   const argTypes = convertType(extractedTypes.CSFStory);
   expect(argTypes).toEqual({
@@ -47,7 +47,7 @@ test("should work for CSF-style objects", () => {
     `
   );
 
-  const extractedTypes = extractStoryArgs(project, "a.ts");
+  const extractedTypes = extractCSF(project, "a.ts");
 
   ["RenderStory", "ComponentStory"].forEach((storyName) => {
     expect(extractedTypes).toHaveProperty(storyName);
@@ -79,7 +79,7 @@ test('should inherit "component" property from meta', () => {
     `
   );
 
-  const extractedTypes = extractStoryArgs(project, "a.ts");
+  const extractedTypes = extractCSF(project, "a.ts");
 
   expect(extractedTypes).toHaveProperty("AStory");
   const convertedType = convertType(extractedTypes.AStory);
@@ -89,7 +89,7 @@ test('should inherit "component" property from meta', () => {
   });
 });
 
-test.only('should resolve "component" through indirection', () => {
+test('should resolve "component" through indirection', () => {
   const project = new Project();
   project.createSourceFile(
     "a.ts",
@@ -111,7 +111,7 @@ test.only('should resolve "component" through indirection', () => {
     `
   );
 
-  const extractedTypes = extractStoryArgs(project, "a.ts");
+  const extractedTypes = extractCSF(project, "a.ts");
 
   expect(extractedTypes).toHaveProperty("AStory");
   const convertedType = convertType(extractedTypes.AStory);

@@ -1,6 +1,6 @@
 import { Project } from "ts-morph";
 import { test, expect } from "vitest";
-import extractComponentParams from "./extract_components";
+import extractComponents from "./extract_components";
 
 test("extracts exported Preact functional components from a file", async () => {
   const project = new Project({
@@ -8,7 +8,7 @@ test("extracts exported Preact functional components from a file", async () => {
   });
   const detected = new Set(
     Object.keys(
-      extractComponentParams(project, "src/examples/function_components.tsx")
+      extractComponents(project, "src/examples/function_components.tsx")
     )
   );
   expect(detected).toEqual(
@@ -44,7 +44,7 @@ test("extracts exported Preact class components from a file", async () => {
   const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
   });
-  const result = extractComponentParams(
+  const result = extractComponents(
     project,
     "src/examples/class_components.tsx"
   );

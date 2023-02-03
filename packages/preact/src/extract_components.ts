@@ -98,7 +98,7 @@ const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
   }
 };
 
-const extractComponentParams = (
+const extractComponents = (
   project: Project,
   filePath: string
 ): Record<string, Type> => {
@@ -118,4 +118,4 @@ const extractComponentParams = (
   return extracted;
 };
 
-export default extractComponentParams;
+export default extractComponents;

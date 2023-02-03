@@ -133,7 +133,7 @@ const getArgsType = (
  * @param filePath The filename relative to the project root.
  * @param componentExtractor An optional function that extracts arg types for a particular frontend framework.
  */
-const extractStoryArgs = (
+const extractCSF = (
   project: Project,
   filePath: string,
   componentExtractor?: ComponentExtractor
@@ -155,4 +155,4 @@ const extractStoryArgs = (
   return stories;
 };
 
-export default extractStoryArgs;
+export default extractCSF;
