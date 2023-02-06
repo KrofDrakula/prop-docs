@@ -6,9 +6,14 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test -- --run",
     "lint": "pnpm -r lint",
+    "update-docs": "ts-node-esm tools/update_readme.ts",
     "publish": "pnpm -r npm publish --access public"
   },
   "devDependencies": {
-    "@changesets/cli": "2.26.0"
+    "@changesets/cli": "2.26.0",
+    "@tsconfig/recommended": "1.0.2",
+    "@types/node": "16",
+    "ts-node": "10.9.1",
+    "typescript": "4.9.5"
   }
 }
