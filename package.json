@@ -7,7 +7,7 @@
     "test": "pnpm -r test -- --run",
     "lint": "pnpm -r lint",
     "update-docs": "ts-node-esm tools/update_readme.ts",
-    "publish": "pnpm -r npm publish --access public"
+    "publish": "pnpm -r exec npm publish --access public"
   },
   "devDependencies": {
     "@changesets/cli": "2.26.0",
