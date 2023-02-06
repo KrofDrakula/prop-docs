@@ -5,7 +5,8 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test -- --run",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "publish": "pnpm -r npm publish --access public"
   },
   "devDependencies": {
     "@changesets/cli": "2.26.0"
