@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-preact
 
+## 0.0.3
+
+### Patch Changes
+
+- d07e85f: Cleaning up API and improving type detection
+
 ## 0.0.2
 
 ### Patch Changes
