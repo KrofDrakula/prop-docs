@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-storybook
 
+## 0.0.4
+
+### Patch Changes
+
+- Add tool for updating docs automatically
+
 ## 0.0.3
 
 ### Patch Changes

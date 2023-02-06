@@ -24,6 +24,8 @@ function for a particular framework (like Storybook).
 
 ---
 
+<!--#include(packages/preact/README.md)-->
+
 ## Preact
 
 Install the `preact` package:
@@ -86,6 +88,10 @@ const { Badge, Profile } = extractComponents(project, 'components.tsx');
 The return types are instances of [`Type`](https://ts-morph.com/details/types)
 which provides the description of the props object.
 
+<!--#/include-->
+
+<!--#include(packages/storybook/README.md)-->
+
 ## Storybook
 
 ```
@@ -120,3 +126,5 @@ const profileArgTypes = convertType(Profile);
 //         }
 //       }
 ```
+
+<!--#/include-->
