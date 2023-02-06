@@ -70,7 +70,7 @@ it for your code base:
 
 ```ts
 import { Project } from "ts-morph";
-import { extractComponentParams } from '@krofdrakula/prop-docs-preact`;
+import { extractComponents } from '@krofdrakula/prop-docs-preact`;
 
 const project = new Project({
   // Configure your tsconfig.json path and other options.
@@ -78,7 +78,7 @@ const project = new Project({
   // `compilerOptions` here if needed.
 });
 
-const { Badge, Profile } = extractComponentParams(project, 'components.tsx');
+const { Badge, Profile } = extractComponents(project, 'components.tsx');
 //             ^? { image: string; name: string; }
 //      ^? { name: string; count: number; }
 ```
@@ -102,12 +102,12 @@ correct description:
 
 ```ts
 import { Project } from "ts-morph";
-import { extractComponentParams } from "@krofdrakula/prop-docs-preact";
+import { extractComponents } from "@krofdrakula/prop-docs-preact";
 import { convertType } from "@krofdrakula/prop-docs-storybook";
 
 const project = new Project();
 // this project assumes that `components.tsx` exists as in the Preact example
-const { Profile } = extractComponentParams(project, "components.tsx");
+const { Profile } = extractComponents(project, "components.tsx");
 const profileArgTypes = convertType(Profile);
 //    ^? {
 //         name: {
