@@ -1,3 +1,3 @@
-import extractComponents from "./extract_components";
+import extractComponents, { getPropsType } from "./extract_components";
 
-export { extractComponents };
+export { extractComponents, getPropsType };

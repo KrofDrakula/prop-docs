@@ -48,11 +48,16 @@ const doesClassExtendComponent = (node: Node): boolean => {
 };
 
 const getParameterTypeFromFunction = (
-  node: ArrowFunction | FunctionDeclaration | FunctionExpression
+  node: ArrowFunction | FunctionDeclaration | FunctionExpression,
+  typeChecker: TypeChecker
 ): Type | void => {
-  return isFunctionalComponent(node)
-    ? node.getParameters()[0]?.getType()
-    : undefined;
+  if (!isFunctionalComponent(node)) return;
+  const param = node.getParameters()[0];
+  let type = typeChecker.getTypeAtLocation(param);
+  if (type.getText().startsWith("preact.RenderableProps")) {
+    type = type.getAliasTypeArguments()[0];
+  }
+  return type;
 };
 
 const getParameterTypeFromClass = (
@@ -63,13 +68,16 @@ const getParameterTypeFromClass = (
     : undefined;
 };
 
-const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
+export const getPropsType = (
+  node: Node,
+  typeChecker: TypeChecker
+): Type | void => {
   if (
     node.isKind(SyntaxKind.ArrowFunction) ||
     node.isKind(SyntaxKind.FunctionDeclaration) ||
     node.isKind(SyntaxKind.FunctionExpression)
   ) {
-    return getParameterTypeFromFunction(node);
+    return getParameterTypeFromFunction(node, typeChecker);
   } else if (
     node.isKind(SyntaxKind.ClassDeclaration) ||
     node.isKind(SyntaxKind.ClassExpression)
@@ -86,15 +94,16 @@ const getParamType = (node: Node, typeChecker: TypeChecker): Type | void => {
       const [signature] = initType.getCallSignatures();
       if (signature) {
         return getParameterTypeFromFunction(
-          signature.getDeclaration() as FunctionExpression
+          signature.getDeclaration() as FunctionExpression,
+          typeChecker
         );
       }
     } else if (initializer) {
-      return getParamType(initializer, typeChecker);
+      return getPropsType(initializer, typeChecker);
     }
   } else if (node.isKind(SyntaxKind.Identifier)) {
     const declaration = node.getSymbol()?.getDeclarations()[0];
-    if (declaration) return getParamType(declaration, typeChecker);
+    if (declaration) return getPropsType(declaration, typeChecker);
   }
 };
 
@@ -108,7 +117,7 @@ const extractComponents = (
 
   for (const [name, declarations] of source.getExportedDeclarations()) {
     for (const declaration of declarations) {
-      const detectedParams = getParamType(declaration, typeChecker);
+      const detectedParams = getPropsType(declaration, typeChecker);
       if (detectedParams) {
         extracted[name] = detectedParams;
       }

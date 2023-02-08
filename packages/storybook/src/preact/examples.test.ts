@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { extractComponents } from "@krofdrakula/prop-docs-preact";
+import { getPropsType } from "@krofdrakula/prop-docs-preact";
 import { Project } from "ts-morph";
 import dedent from "dedent";
 import convertType from "../convert_type";
@@ -20,7 +20,7 @@ test("should be able to use extracted functional component props from Preact com
       age?: number;
     }
 
-    export const Showcase: FunctionalComponent<Props> = ({name,age}) => (
+    export const Showcase: FunctionalComponent<Props> = ({ name, age }) => (
       <div>
         <span>{name}</span>
         {age ? <span>{age}</span> : null}
@@ -28,7 +28,7 @@ test("should be able to use extracted functional component props from Preact com
     );
   `
   );
-  const { Showcase } = extractComponents(project, "a.ts");
+  const { Showcase } = extractCSF(project, "a.ts", getPropsType);
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
@@ -77,7 +77,7 @@ test("should be able to use extracted props from Preact class components", () =>
       };
     `
   );
-  const { Showcase } = extractComponents(project, "a.ts");
+  const { Showcase } = extractCSF(project, "a.ts", getPropsType);
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
@@ -126,7 +126,7 @@ test("should be able to extract props from imported types", () => {
       );
     `
   );
-  const { Showcase } = extractComponents(project, "a.ts");
+  const { Showcase } = extractCSF(project, "a.ts", getPropsType);
   expect(Showcase).toBeDefined();
   const argTypes = convertType(Showcase);
   expect(argTypes).toEqual({
@@ -147,7 +147,7 @@ test("should be able to extract props from imported types", () => {
   });
 });
 
-test.skip("should be able to work with stories importing Preact components", () => {
+test("should be able to work with stories importing Preact components", () => {
   const project = new Project();
   project.createSourceFile(
     "comp.ts",
@@ -182,7 +182,7 @@ test.skip("should be able to work with stories importing Preact components", () 
     `
   );
 
-  const stories = extractCSF(project, "comp.stories.ts");
+  const stories = extractCSF(project, "comp.stories.ts", getPropsType);
   expect(stories).toHaveProperty("Basic");
   const converted = convertType(stories.Basic);
   expect(converted).toEqual({

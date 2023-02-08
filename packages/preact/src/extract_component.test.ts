@@ -6,12 +6,12 @@ test("extracts exported Preact functional components from a file", async () => {
   const project = new Project({
     tsConfigFilePath: "./tsconfig.json",
   });
-  const detected = new Set(
-    Object.keys(
-      extractComponents(project, "src/examples/function_components.tsx")
-    )
+  const detected = extractComponents(
+    project,
+    "src/examples/function_components.tsx"
   );
-  expect(detected).toEqual(
+
+  expect(new Set(Object.keys(detected))).toEqual(
     new Set([
       "Functional",
       "AlsoFunctional",
@@ -33,9 +33,11 @@ test("extracts exported Preact functional components from a file", async () => {
 
   for (const [key, value] of Object.entries(detected)) {
     if (key == "Untyped") {
-      expect(value.getText()).toEqual("unknown");
+      expect(value.getText()).toEqual("any");
     } else {
-      expect(value.getText()).toMatch(/\.ExampleProps$/);
+      expect(
+        new Set(value.getProperties().map((prop) => prop.getName()))
+      ).toEqual(new Set(["count", "name", "attributes"]));
     }
   }
 });
@@ -64,7 +66,9 @@ test("extracts exported Preact class components from a file", async () => {
     if (key == "Untyped") {
       expect(value.getText()).toEqual("unknown");
     } else {
-      expect(value.getText()).toMatch(/\.ExampleProps$/);
+      expect(
+        new Set(value.getProperties().map((prop) => prop.getName()))
+      ).toEqual(new Set(["count", "name", "attributes"]));
     }
   }
 });

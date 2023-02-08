@@ -101,8 +101,6 @@ const convertType = (type: Type): ArgTypes => {
       const description = getDescription(decl);
       if (description) result[name].description = description;
     }
-  } else if (type.getText().startsWith("preact.RenderableProps")) {
-    return convertType(type.getAliasTypeArguments()[0]);
   }
 
   return result;
