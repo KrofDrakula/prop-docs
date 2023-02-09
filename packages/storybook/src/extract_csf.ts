@@ -133,7 +133,7 @@ const getArgsType = (
       .getModuleSpecifierSourceFile()
       ?.getExportedDeclarations()
       .get(node.getText())?.[0];
-    if (exported) getArgsType(exported, typeChecker, componentExtractor);
+    if (exported) return getArgsType(exported, typeChecker, componentExtractor);
   }
 };
 
