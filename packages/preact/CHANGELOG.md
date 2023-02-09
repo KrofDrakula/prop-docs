@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-preact
 
+## 0.0.5
+
+### Patch Changes
+
+- Exposed prop extractor function from Preact, added ability to extract component props from CSF
+
 ## 0.0.4
 
 ### Patch Changes
