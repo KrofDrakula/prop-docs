@@ -50,7 +50,7 @@ const doesClassExtendComponent = (node: Node): boolean => {
 const getParameterTypeFromFunction = (
   node: ArrowFunction | FunctionDeclaration | FunctionExpression,
   typeChecker: TypeChecker
-): Type | void => {
+): Type | undefined => {
   if (!isFunctionalComponent(node)) return;
   const param = node.getParameters()[0];
   let type = typeChecker.getTypeAtLocation(param);
@@ -71,7 +71,7 @@ const getParameterTypeFromClass = (
 export const getPropsType = (
   node: Node,
   typeChecker: TypeChecker
-): Type | void => {
+): Type | undefined => {
   if (
     node.isKind(SyntaxKind.ArrowFunction) ||
     node.isKind(SyntaxKind.FunctionDeclaration) ||
@@ -105,6 +105,8 @@ export const getPropsType = (
     const declaration = node.getSymbol()?.getDeclarations()[0];
     if (declaration) return getPropsType(declaration, typeChecker);
   }
+
+  return undefined;
 };
 
 const extractComponents = (

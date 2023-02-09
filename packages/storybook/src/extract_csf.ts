@@ -13,14 +13,17 @@ import {
   ObjectLiteralElementLike,
 } from "ts-morph";
 
-type ComponentExtractor = (node: Node, typeChecker: TypeChecker) => Type | void;
+type ComponentExtractor = (
+  node: Node,
+  typeChecker: TypeChecker
+) => Type | undefined;
 
 const getArgsTypeFromFunction = (
   node: ArrowFunction | FunctionDeclaration | FunctionExpression,
   typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
-): Type | void => {
-  let type: Type | void = componentExtractor
+): Type | undefined => {
+  let type: Type | undefined = componentExtractor
     ? componentExtractor(node, typeChecker)
     : node.getParameters()[0]?.getType();
   return type;
@@ -30,7 +33,7 @@ const getArgsTypeFromClassComponent = (
   node: ClassDeclaration | ClassExpression,
   typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
-): Type | void => {
+): Type | undefined => {
   return componentExtractor?.(node, typeChecker);
 };
 
@@ -54,7 +57,7 @@ const getArgsFromStoryObject = (
   node: ObjectLiteralExpression,
   typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
-): Type | void => {
+): Type | undefined => {
   // we first check the `render` property since that overrides the `component` property
   const renderFn = getPropertyValue(node.getProperty("render"));
   if (renderFn) return getArgsType(renderFn, typeChecker, componentExtractor);
@@ -80,13 +83,15 @@ const getArgsFromStoryObject = (
         return getArgsType(defaultComponentFn, typeChecker, componentExtractor);
     }
   }
+
+  return undefined;
 };
 
 const getArgsType = (
   node: Node,
   typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
-): Type | void => {
+): Type | undefined => {
   if (
     node.isKind(SyntaxKind.ArrowFunction) ||
     node.isKind(SyntaxKind.FunctionDeclaration) ||
@@ -135,6 +140,8 @@ const getArgsType = (
       .get(node.getText())?.[0];
     if (exported) return getArgsType(exported, typeChecker, componentExtractor);
   }
+
+  return undefined;
 };
 
 /**

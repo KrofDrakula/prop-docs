@@ -8,7 +8,7 @@ import {
 } from "ts-morph";
 import type { ArgTypes, SBType } from "@storybook/types";
 
-const getDescription = (node: Node): string | void => {
+const getDescription = (node: Node): string | undefined => {
   if (
     node.isKind(SyntaxKind.PropertyAssignment) ||
     node.isKind(SyntaxKind.PropertySignature)
@@ -17,6 +17,7 @@ const getDescription = (node: Node): string | void => {
     const docs = node.compilerNode.jsDoc as ts.JSDoc[];
     return docs?.length > 0 ? docs.map((c) => c.comment).join("\n") : undefined;
   }
+  return undefined;
 };
 
 const convertObject = (type: Type): Record<string, SBType> => {
@@ -35,7 +36,7 @@ const convertObject = (type: Type): Record<string, SBType> => {
 const convertTypeToStorybookType = (
   type: Type,
   required?: boolean
-): SBType | void => {
+): SBType | undefined => {
   let result: SBType | undefined = undefined;
   const normalized = type.getBaseTypeOfLiteralType();
   if (normalized.isBoolean()) {
@@ -62,7 +63,9 @@ const convertTypeToStorybookType = (
   return result;
 };
 
-const getPropertyAssignmentType = (node: PropertyAssignment): SBType | void => {
+const getPropertyAssignmentType = (
+  node: PropertyAssignment
+): SBType | undefined => {
   const initializer = node.getInitializer();
   if (!initializer) return;
   const propType = initializer.getType();
@@ -71,7 +74,9 @@ const getPropertyAssignmentType = (node: PropertyAssignment): SBType | void => {
     : undefined;
 };
 
-const getPropertySignatureType = (node: PropertySignature): SBType | void => {
+const getPropertySignatureType = (
+  node: PropertySignature
+): SBType | undefined => {
   let propType = node.getType();
   const isUnionType = propType.isUnion();
   const hasUndefined =
@@ -82,12 +87,13 @@ const getPropertySignatureType = (node: PropertySignature): SBType | void => {
   return convertTypeToStorybookType(propType, required);
 };
 
-const extractTypeForProperty = (node: Node | undefined): SBType | void => {
+const extractTypeForProperty = (node: Node | undefined): SBType | undefined => {
   if (node?.isKind(SyntaxKind.PropertyAssignment)) {
     return getPropertyAssignmentType(node);
   } else if (node?.isKind(SyntaxKind.PropertySignature)) {
     return getPropertySignatureType(node);
   }
+  return undefined;
 };
 
 const convertType = (type: Type): ArgTypes => {
