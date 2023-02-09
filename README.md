@@ -108,12 +108,12 @@ correct description:
 
 ```ts
 import { Project } from "ts-morph";
-import { extractComponents } from "@krofdrakula/prop-docs-preact";
-import { convertType } from "@krofdrakula/prop-docs-storybook";
+import { getPropsType } from "@krofdrakula/prop-docs-preact";
+import { extractCSF, convertType } from "@krofdrakula/prop-docs-storybook";
 
 const project = new Project();
 // this project assumes that `components.tsx` exists as in the Preact example
-const { Profile } = extractComponents(project, "components.tsx");
+const { Profile } = extractCSF(project, "components.tsx", getPropsType);
 const profileArgTypes = convertType(Profile);
 //    ^? {
 //         name: {
