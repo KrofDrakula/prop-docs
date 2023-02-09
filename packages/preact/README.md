@@ -51,7 +51,7 @@ it for your code base:
 
 ```ts
 import { Project } from "ts-morph";
-import { extractComponents } from '@krofdrakula/prop-docs-preact`;
+import { extractComponents } from "@krofdrakula/prop-docs-preact";
 
 const project = new Project({
   // Configure your tsconfig.json path and other options.
@@ -59,7 +59,7 @@ const project = new Project({
   // `compilerOptions` here if needed.
 });
 
-const { Badge, Profile } = extractComponents(project, 'components.tsx');
+const { Badge, Profile } = extractComponents(project, "components.tsx");
 //             ^? { image: string; name: string; }
 //      ^? { name: string; count: number; }
 ```
