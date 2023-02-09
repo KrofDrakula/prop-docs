@@ -147,7 +147,7 @@ test("should be able to extract props from imported types", () => {
   });
 });
 
-test.only("should be able to work with stories importing Preact components", () => {
+test("should be able to work with stories importing Preact components", () => {
   const project = new Project();
   project.createSourceFile(
     "comp.ts",
