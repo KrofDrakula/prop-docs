@@ -1,4 +1,4 @@
-![](https://github.com/krofdrakula/prop-docs/actions/workflows/main.yaml/badge.svg)
+![](https://github.com/krofdrakula/prop-docs/actions/workflows/main.yml/badge.svg)
 
 # prop-docs
 
