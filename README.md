@@ -1,3 +1,5 @@
+![](https://github.com/krofdrakula/prop-docs/actions/workflows/main.yaml/badge.svg)
+
 # prop-docs
 
 A tool to extract property type information from JSX components using
