@@ -10,6 +10,8 @@ export default defineConfig({
       name: "@krofdrakula/prop-docs-preact",
       fileName: "index",
     },
+    emptyOutDir: true,
+    reportCompressedSize: true,
     rollupOptions: {
       external: ["preact", "ts-morph"],
     },

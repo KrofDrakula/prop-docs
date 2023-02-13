@@ -10,6 +10,8 @@ export default defineConfig({
       name: "@krofdrakula/prop-docs-storybook",
       fileName: "index",
     },
+    emptyOutDir: true,
+    reportCompressedSize: true,
     rollupOptions: {
       external: ["ts-morph"],
     },
