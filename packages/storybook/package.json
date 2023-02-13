@@ -37,10 +37,8 @@
     "lint": "tsc"
   },
   "peerDependencies": {
-    "typescript": ">=4"
-  },
-  "dependencies": {
-    "ts-morph": "17.0.1"
+    "typescript": ">=4",
+    "ts-morph": "^17.0.1"
   },
   "devDependencies": {
     "@krofdrakula/prop-docs-preact": "workspace:*",
