@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-storybook
 
+## 0.0.6
+
+### Patch Changes
+
+- Require ts-morph as peer dependency
+
 ## 0.0.5
 
 ### Patch Changes
