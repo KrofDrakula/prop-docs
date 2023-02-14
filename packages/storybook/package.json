@@ -15,6 +15,9 @@
     "preact"
   ],
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "files": [
     "dist",
