@@ -53,6 +53,7 @@ const getParameterTypeFromFunction = (
 ): Type | undefined => {
   if (!isFunctionalComponent(node)) return;
   const param = node.getParameters()[0];
+  if (!param) return;
   let type = typeChecker.getTypeAtLocation(param);
   if (type.getText().startsWith("preact.RenderableProps")) {
     type = type.getAliasTypeArguments()[0];
