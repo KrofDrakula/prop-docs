@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-preact
 
+## 0.0.7
+
+### Patch Changes
+
+- Fix passing possibly undefined arg to getDescription
+
 ## 0.0.6
 
 ### Patch Changes
