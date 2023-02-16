@@ -8,10 +8,10 @@ import {
 } from "ts-morph";
 import type { ArgTypes, SBType } from "@storybook/types";
 
-const getDescription = (node: Node): string | undefined => {
+const getDescription = (node: Node | undefined): string | undefined => {
   if (
-    node.isKind(SyntaxKind.PropertyAssignment) ||
-    node.isKind(SyntaxKind.PropertySignature)
+    node?.isKind(SyntaxKind.PropertyAssignment) ||
+    node?.isKind(SyntaxKind.PropertySignature)
   ) {
     // @ts-expect-error https://github.com/dsherret/ts-morph/issues/1379
     const docs = node.compilerNode.jsDoc as ts.JSDoc[];
