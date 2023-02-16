@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-preact
 
+## 0.0.9
+
+### Patch Changes
+
+- Fix logical bug when fetching types from function signature
+
 ## 0.0.8
 
 ### Patch Changes
