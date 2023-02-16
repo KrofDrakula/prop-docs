@@ -1,5 +1,11 @@
 # @krofdrakula/prop-docs-storybook
 
+## 0.0.8
+
+### Patch Changes
+
+- Correct unbuilt published package
+
 ## 0.0.7
 
 ### Patch Changes
