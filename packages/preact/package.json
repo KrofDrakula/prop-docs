@@ -37,7 +37,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "lint": "tsc"
+    "lint": "tsc",
+    "prepare": "pnpm lint && pnpm build"
   },
   "peerDependencies": {
     "preact": ">=10",
