@@ -1,4 +1,4 @@
-import { Project } from "ts-morph";
+import { Project, Symbol } from "ts-morph";
 import { test, expect } from "vitest";
 import extractComponents from "./extract_components";
 
@@ -71,4 +71,27 @@ test("extracts exported Preact class components from a file", async () => {
       ).toEqual(new Set(["count", "name", "attributes"]));
     }
   }
+});
+
+const getTypeOfProperty = (node: Symbol) =>
+  node?.getDeclarations()[0]?.getType().getText();
+
+test("correctly determines the prop types from an imported component", () => {
+  const project = new Project({
+    tsConfigFilePath: "./tsconfig.json",
+  });
+  const result = extractComponents(project, "src/examples/imported.tsx");
+  expect(
+    new Set(result.Reexported.getProperties().map((prop) => prop.getName()))
+  ).toEqual(new Set(["count", "name", "attributes"]));
+
+  expect(getTypeOfProperty(result.Reexported.getProperty("count")!)).toEqual(
+    "number"
+  );
+  expect(getTypeOfProperty(result.Reexported.getProperty("name")!)).toEqual(
+    "string"
+  );
+  expect(
+    getTypeOfProperty(result.Reexported.getProperty("attributes")!)
+  ).toEqual("Record<string, string>");
 });

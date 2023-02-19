@@ -3,7 +3,6 @@ import {
   SyntaxKind,
   Type,
   Node,
-  TypeChecker,
   ArrowFunction,
   FunctionDeclaration,
   FunctionExpression,
@@ -48,13 +47,12 @@ const doesClassExtendComponent = (node: Node): boolean => {
 };
 
 const getParameterTypeFromFunction = (
-  node: ArrowFunction | FunctionDeclaration | FunctionExpression,
-  typeChecker: TypeChecker
+  node: ArrowFunction | FunctionDeclaration | FunctionExpression
 ): Type | undefined => {
   if (!isFunctionalComponent(node)) return;
   const param = node.getParameters()[0];
   if (!param) return;
-  let type = typeChecker.getTypeAtLocation(param);
+  let type = node.getProject().getTypeChecker().getTypeAtLocation(param);
   if (type.getText().startsWith("preact.RenderableProps")) {
     type = type.getAliasTypeArguments()[0];
   }
@@ -69,16 +67,13 @@ const getParameterTypeFromClass = (
     : undefined;
 };
 
-export const getPropsType = (
-  node: Node,
-  typeChecker: TypeChecker
-): Type | undefined => {
+export const getPropsType = (node: Node): Type | undefined => {
   if (
     node.isKind(SyntaxKind.ArrowFunction) ||
     node.isKind(SyntaxKind.FunctionDeclaration) ||
     node.isKind(SyntaxKind.FunctionExpression)
   ) {
-    return getParameterTypeFromFunction(node, typeChecker);
+    return getParameterTypeFromFunction(node);
   } else if (
     node.isKind(SyntaxKind.ClassDeclaration) ||
     node.isKind(SyntaxKind.ClassExpression)
@@ -87,7 +82,10 @@ export const getPropsType = (
   } else if (node.isKind(SyntaxKind.VariableDeclaration)) {
     const initializer = node.getInitializer();
     if (initializer?.isKind(SyntaxKind.CallExpression)) {
-      const initType = typeChecker.getTypeAtLocation(initializer);
+      const initType = initializer
+        .getProject()
+        .getTypeChecker()
+        .getTypeAtLocation(initializer);
       const callResult = initType.getSymbol()?.getDeclarations()[0];
       if (callResult?.isKind(SyntaxKind.ClassExpression)) {
         return getParameterTypeFromClass(callResult);
@@ -95,16 +93,24 @@ export const getPropsType = (
       const [signature] = initType.getCallSignatures();
       if (signature) {
         return getParameterTypeFromFunction(
-          signature.getDeclaration() as FunctionExpression,
-          typeChecker
+          signature.getDeclaration() as FunctionExpression
         );
       }
     } else if (initializer) {
-      return getPropsType(initializer, typeChecker);
+      return getPropsType(initializer);
     }
   } else if (node.isKind(SyntaxKind.Identifier)) {
     const declaration = node.getSymbol()?.getDeclarations()[0];
-    if (declaration) return getPropsType(declaration, typeChecker);
+    if (declaration) return getPropsType(declaration);
+  } else if (node.isKind(SyntaxKind.ImportSpecifier)) {
+    const decl = node
+      .getImportDeclaration()
+      .getModuleSpecifierSourceFile()
+      ?.getExportedDeclarations()
+      .get(node.getText())?.[0];
+    if (decl) {
+      return getPropsType(decl);
+    }
   }
 
   return undefined;
@@ -115,12 +121,11 @@ const extractComponents = (
   filePath: string
 ): Record<string, Type> => {
   const extracted: Record<string, Type> = {};
-  const typeChecker = project.getTypeChecker();
   const source = project.getSourceFileOrThrow(filePath);
 
   for (const [name, declarations] of source.getExportedDeclarations()) {
     for (const declaration of declarations) {
-      const detectedParams = getPropsType(declaration, typeChecker);
+      const detectedParams = getPropsType(declaration);
       if (detectedParams) {
         extracted[name] = detectedParams;
       }

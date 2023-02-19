@@ -3,7 +3,6 @@ import {
   SyntaxKind,
   Type,
   Node,
-  TypeChecker,
   ArrowFunction,
   FunctionDeclaration,
   FunctionExpression,
@@ -13,28 +12,23 @@ import {
   ObjectLiteralElementLike,
 } from "ts-morph";
 
-type ComponentExtractor = (
-  node: Node,
-  typeChecker: TypeChecker
-) => Type | undefined;
+type ComponentExtractor = (node: Node) => Type | undefined;
 
 const getArgsTypeFromFunction = (
   node: ArrowFunction | FunctionDeclaration | FunctionExpression,
-  typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
 ): Type | undefined => {
   let type: Type | undefined = componentExtractor
-    ? componentExtractor(node, typeChecker)
+    ? componentExtractor(node)
     : node.getParameters()[0]?.getType();
   return type;
 };
 
 const getArgsTypeFromClassComponent = (
   node: ClassDeclaration | ClassExpression,
-  typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
 ): Type | undefined => {
-  return componentExtractor?.(node, typeChecker);
+  return componentExtractor?.(node);
 };
 
 const getDefaultExport = (node: Node): Node | undefined => {
@@ -55,17 +49,15 @@ const getPropertyValue = (
 
 const getArgsFromStoryObject = (
   node: ObjectLiteralExpression,
-  typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
 ): Type | undefined => {
   // we first check the `render` property since that overrides the `component` property
   const renderFn = getPropertyValue(node.getProperty("render"));
-  if (renderFn) return getArgsType(renderFn, typeChecker, componentExtractor);
+  if (renderFn) return getArgsType(renderFn, componentExtractor);
 
   // we fall back on the `component` property
   const componentFn = getPropertyValue(node.getProperty("component"));
-  if (componentFn)
-    return getArgsType(componentFn, typeChecker, componentExtractor);
+  if (componentFn) return getArgsType(componentFn, componentExtractor);
 
   // at this point, the meta might define the component to render
   const meta = getDefaultExport(node);
@@ -80,16 +72,32 @@ const getArgsFromStoryObject = (
         defaultObj.getProperty("component")
       );
       if (defaultComponentFn)
-        return getArgsType(defaultComponentFn, typeChecker, componentExtractor);
+        return getArgsType(defaultComponentFn, componentExtractor);
     }
   }
 
   return undefined;
 };
 
+const FUNCTIONAL_PATTERN = /^(FunctionalComponent|FunctionComponent)</;
+const STORY_OBJ_PATTERN = /^StoryObj</;
+const COMPONENT_PROPS_PATTERN = /^ComponentProps</;
+
+const extractPropsFromType = (type: Type | undefined): Type | undefined => {
+  if (!type) return;
+  const typeText = type.getText();
+  if (FUNCTIONAL_PATTERN.test(typeText) || STORY_OBJ_PATTERN.test(typeText)) {
+    const props = type.getAliasTypeArguments()[0];
+    if (props) return extractPropsFromType(props);
+  } else if (COMPONENT_PROPS_PATTERN.test(typeText)) {
+    const component = type.getAliasTypeArguments()[0];
+    if (component) return extractPropsFromType(component);
+  }
+  return type;
+};
+
 const getArgsType = (
   node: Node,
-  typeChecker: TypeChecker,
   componentExtractor: ComponentExtractor | undefined
 ): Type | undefined => {
   if (
@@ -97,50 +105,41 @@ const getArgsType = (
     node.isKind(SyntaxKind.FunctionDeclaration) ||
     node.isKind(SyntaxKind.FunctionExpression)
   ) {
-    return getArgsTypeFromFunction(node, typeChecker, componentExtractor);
+    return getArgsTypeFromFunction(node, componentExtractor);
   } else if (
     node.isKind(SyntaxKind.ClassDeclaration) ||
     node.isKind(SyntaxKind.ClassExpression)
   ) {
-    return getArgsTypeFromClassComponent(node, typeChecker, componentExtractor);
+    return getArgsTypeFromClassComponent(node, componentExtractor);
   } else if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
-    return getArgsFromStoryObject(node, typeChecker, componentExtractor);
+    return getArgsFromStoryObject(node, componentExtractor);
   } else if (node.isKind(SyntaxKind.VariableDeclaration)) {
-    const initializer = node.getInitializer();
-    if (initializer?.isKind(SyntaxKind.CallExpression)) {
-      const initType = typeChecker.getTypeAtLocation(initializer);
-      const callResult = initType.getSymbol()?.getDeclarations()[0];
-      if (callResult?.isKind(SyntaxKind.ObjectLiteralExpression)) {
-        return getArgsFromStoryObject(
-          callResult,
-          typeChecker,
-          componentExtractor
-        );
-      }
-      const [signature] = initType.getCallSignatures();
-      if (signature) {
-        return getArgsTypeFromFunction(
-          signature.getDeclaration() as FunctionExpression,
-          typeChecker,
-          componentExtractor
-        );
-      }
-    } else if (initializer) {
-      return getArgsType(initializer, typeChecker, componentExtractor);
+    const assignedType = node.getType();
+    if (assignedType.isClass()) {
+      const initializer = node.getInitializer() as ClassExpression;
+      if (initializer)
+        return getArgsTypeFromClassComponent(initializer, componentExtractor);
+    } else if (assignedType.getCallSignatures()?.length > 0) {
+      const initializer = node.getInitializer() as FunctionExpression;
+      if (initializer)
+        return getArgsTypeFromFunction(initializer, componentExtractor);
     }
+    return extractPropsFromType(assignedType);
+  } else if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
+    return getArgsFromStoryObject(node, componentExtractor);
   } else if (node.isKind(SyntaxKind.Identifier)) {
     const declaration = node.getSymbol()?.getDeclarations()[0];
-    if (declaration)
-      return getArgsType(declaration, typeChecker, componentExtractor);
+    if (declaration) return getArgsType(declaration, componentExtractor);
   } else if (node.isKind(SyntaxKind.ImportSpecifier)) {
     const exported = node
       .getImportDeclaration()
       .getModuleSpecifierSourceFile()
       ?.getExportedDeclarations()
       .get(node.getText())?.[0];
-    if (exported) return getArgsType(exported, typeChecker, componentExtractor);
+    if (exported) {
+      return getArgsType(exported, componentExtractor);
+    }
   }
-
   return undefined;
 };
 
@@ -157,16 +156,11 @@ const extractCSF = (
   componentExtractor?: ComponentExtractor
 ): Record<string, Type> => {
   const stories: Record<string, Type> = {};
-  const typeChecker = project.getTypeChecker();
   const source = project.getSourceFileOrThrow(filePath);
   for (const [name, declarations] of source.getExportedDeclarations()) {
     if (name == "default") continue;
     for (const declaration of declarations) {
-      const detectedArgs = getArgsType(
-        declaration,
-        typeChecker,
-        componentExtractor
-      );
+      const detectedArgs = getArgsType(declaration, componentExtractor);
       if (detectedArgs) stories[name] = detectedArgs;
     }
   }

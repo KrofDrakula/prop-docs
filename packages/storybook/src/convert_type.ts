@@ -101,14 +101,13 @@ const convertType = (type: Type): ArgTypes => {
   if (type.isObject() || type.isInterface()) {
     for (const property of type.getProperties()) {
       const name = property.getName();
-      const [decl] = property.getDeclarations() ?? [];
+      const [decl] = property.getDeclarations();
       const valueType = extractTypeForProperty(decl);
       result[name] = valueType ? { type: valueType } : {};
       const description = getDescription(decl);
       if (description) result[name].description = description;
     }
   }
-
   return result;
 };
 

@@ -101,7 +101,7 @@ test('should resolve "component" through indirection', () => {
 
       const MyButton = (args: Args) => <div>Hello!</div>;
 
-      const component = MyButton
+      const component = MyButton;
 
       export default {
         component
