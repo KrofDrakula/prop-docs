@@ -14,6 +14,8 @@ test("should work for function type stories", () => {
         age?: number;
       }
 
+      export default {};
+
       export const CSFStory = (args: Args) => <div>Hello!</div>;
     `
   );
@@ -36,6 +38,8 @@ test("should work for CSF-style objects", () => {
         name: string;
         age?: number;
       }
+
+      export default {};
 
       export const RenderStory = {
         render: (args: Args) => <div>Hello!</div>

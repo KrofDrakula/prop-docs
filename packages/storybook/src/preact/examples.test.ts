@@ -13,6 +13,8 @@ test("should be able to use extracted functional component props from Preact com
     /* @jsxRuntime automatic @jsxImportSource preact */
     import { FunctionalComponent } from 'preact';
 
+    export default {};
+
     interface Props {
       /** Provide the name of the product to display */
       name: string;
@@ -56,6 +58,8 @@ test("should be able to use extracted props from Preact class components", () =>
     dedent`
       /* @jsxRuntime automatic @jsxImportSource preact */
       import { Component } from 'preact';
+
+      export default {};
 
       interface Props {
         /** Provide the name of the product to display */
@@ -117,6 +121,8 @@ test("should be able to extract props from imported types", () => {
       /* @jsxRuntime automatic @jsxImportSource preact */
       import { Props } from './int';
       import { FunctionalComponent } from 'preact';
+
+      export default {};
 
       export const Showcase: FunctionalComponent<Props> = ({name,age}) => (
         <div>

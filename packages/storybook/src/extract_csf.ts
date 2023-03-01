@@ -18,9 +18,9 @@ const getArgsTypeFromFunction = (
   node: ArrowFunction | FunctionDeclaration | FunctionExpression,
   componentExtractor: ComponentExtractor | undefined
 ): Type | undefined => {
-  let type: Type | undefined = componentExtractor
-    ? componentExtractor(node)
-    : node.getParameters()[0]?.getType();
+  let type: Type | undefined;
+  if (componentExtractor) type = componentExtractor(node);
+  if (!type) type = node.getParameters()[0]?.getType();
   return type;
 };
 
@@ -71,10 +71,14 @@ const getArgsFromStoryObject = (
       const defaultComponentFn = getPropertyValue(
         defaultObj.getProperty("component")
       );
-      if (defaultComponentFn)
+      if (defaultComponentFn) {
         return getArgsType(defaultComponentFn, componentExtractor);
+      }
     }
   }
+
+  const args = getPropertyValue(node.getProperty("args"));
+  if (args) return args.getType();
 
   return undefined;
 };
@@ -82,6 +86,7 @@ const getArgsFromStoryObject = (
 const FUNCTIONAL_PATTERN = /^(FunctionalComponent|FunctionComponent)</;
 const STORY_OBJ_PATTERN = /^StoryObj</;
 const COMPONENT_PROPS_PATTERN = /^ComponentProps</;
+const COMPONENT_CLASS_PATTERN = /^Class</;
 
 const extractPropsFromType = (type: Type | undefined): Type | undefined => {
   if (!type) return;
@@ -92,6 +97,9 @@ const extractPropsFromType = (type: Type | undefined): Type | undefined => {
   } else if (COMPONENT_PROPS_PATTERN.test(typeText)) {
     const component = type.getAliasTypeArguments()[0];
     if (component) return extractPropsFromType(component);
+  } else if (COMPONENT_CLASS_PATTERN.test(typeText)) {
+    const props = type.getAliasTypeArguments()[0];
+    if (props) return extractPropsFromType(props);
   }
   return type;
 };
@@ -111,8 +119,6 @@ const getArgsType = (
     node.isKind(SyntaxKind.ClassExpression)
   ) {
     return getArgsTypeFromClassComponent(node, componentExtractor);
-  } else if (node.isKind(SyntaxKind.ObjectLiteralExpression)) {
-    return getArgsFromStoryObject(node, componentExtractor);
   } else if (node.isKind(SyntaxKind.VariableDeclaration)) {
     const assignedType = node.getType();
     if (assignedType.isClass()) {
@@ -157,6 +163,7 @@ const extractCSF = (
 ): Record<string, Type> => {
   const stories: Record<string, Type> = {};
   const source = project.getSourceFileOrThrow(filePath);
+  if (!source.getDefaultExportSymbol()) return stories;
   for (const [name, declarations] of source.getExportedDeclarations()) {
     if (name == "default") continue;
     for (const declaration of declarations) {
